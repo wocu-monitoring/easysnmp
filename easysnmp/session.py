@@ -206,7 +206,7 @@ class Session(object):
 
         # Validate and extract the remote port
         connection_string = re.match(
-            r"^((?:tcp6?:|udp6?:)?\[?([^\[\]]+?)\]?)\:(\d+)$", hostname)
+            r"^((?:tcp|udp)6?:)?\s*([^\s]+?)\s*\]?\s*(?:\:(\d+))?$", hostname)
         if connection_string:
             if remote_port:
                 raise ValueError(
