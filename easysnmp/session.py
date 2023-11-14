@@ -206,10 +206,8 @@ class Session(object):
 
         if hostname_is_IPv4(hostname):
             hostname, remote_port = process_connection_string(hostname, remote_port, False)
-            print(f"--------------------{hostname}--------------------")
         elif hostname_is_IPv6(hostname):
             hostname, remote_port = process_connection_string(hostname, remote_port, True)
-            print(f"--------------------{hostname}--------------------")
 
         self.hostname = hostname
         self.version = version
