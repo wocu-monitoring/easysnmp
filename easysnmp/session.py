@@ -13,7 +13,7 @@ from .exceptions import (
     EasySNMPNoSuchObjectError,
     EasySNMPNoSuchInstanceError,
 )
-from .utils import hostname_is_IPv6
+from .utils import hostname_is_IPv4, hostname_is_IPv6, process_connection_string
 from .variables import SNMPVariable, SNMPVariableList
 
 # Mapping between security level strings and their associated integer values.
@@ -204,23 +204,10 @@ class Session(object):
         abort_on_nonexistent=False,
     ):
 
-        # Validate and extract the remote port
-        connection_string = re.match(
-            r"^((?:tcp6?:|udp6?:)?\[?([^\[\]]+?)\]?)\:(\d+)$", hostname)
-        if connection_string:
-            if remote_port:
-                raise ValueError(
-                    "a remote port was specified yet the hostname appears "
-                    "to have a port defined too"
-                )
-            else:
-                full_address, hostname, remote_port = connection_string.groups()
-                if ":" in hostname and not hostname_is_IPv6(hostname):
-                    raise ValueError(
-                        "an invalid IPv6 address was specified"
-                    )
-                hostname = full_address
-                remote_port = int(remote_port)
+        if hostname_is_IPv4(hostname):
+            hostname, remote_port = process_connection_string(hostname, remote_port, False)
+        elif hostname_is_IPv6(hostname):
+            hostname, remote_port = process_connection_string(hostname, remote_port, True)
 
         self.hostname = hostname
         self.version = version
